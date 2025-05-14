@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
@@ -9,16 +9,16 @@ public class EnemyAi : MonoBehaviour
     public Transform target;
     public float speed = 200f;
     public float nextWaypointDistance = 3f;
+    public float detectionRange = 10f; // distanța la care inamicul "te vede"
 
     public Transform enemyGFX;
 
-    Pathfinding.Path path; // Disambiguate here
+    Pathfinding.Path path;
     int currentWaypoint = 0;
     bool reachedEndOfPath = false;
     Seeker seeker;
     Rigidbody2D rb;
 
-    // Start is called before the first frame update
     void Start()
     {
         seeker = GetComponent<Seeker>();
@@ -29,11 +29,22 @@ public class EnemyAi : MonoBehaviour
 
     void UpdatePath()
     {
-        if (seeker.IsDone())
-            seeker.StartPath(rb.position, target.position, OnPathComplete);
+        float distanceToTarget = Vector2.Distance(rb.position, target.position);
+
+        if (distanceToTarget <= detectionRange)
+        {
+            if (seeker.IsDone())
+            {
+                seeker.StartPath(rb.position, target.position, OnPathComplete);
+            }
+        }
+        else
+        {
+            path = null; // dacă jucătorul e în afara razei, oprește path-ul
+        }
     }
 
-    void OnPathComplete(Pathfinding.Path p) // Make sure the delegate is typed correctly
+    void OnPathComplete(Pathfinding.Path p)
     {
         if (!p.error)
         {
@@ -42,7 +53,6 @@ public class EnemyAi : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         if (path == null)
@@ -70,6 +80,7 @@ public class EnemyAi : MonoBehaviour
             currentWaypoint++;
         }
 
+        // Întoarce inamicul în direcția de mers
         if (force.x >= 0.01f)
         {
             enemyGFX.localScale = new Vector3(-1f, 1f, 1f);
@@ -78,5 +89,12 @@ public class EnemyAi : MonoBehaviour
         {
             enemyGFX.localScale = new Vector3(1f, 1f, 1f);
         }
+    }
+
+    // Desenează în scenă raza de detecție
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
     }
 }
