@@ -8,6 +8,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5017868969049966436, guid: 6bda8edad3e7d354a8704799ee23c93a, type: 3}
+      propertyPath: ID
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5017868969049966436, guid: 6bda8edad3e7d354a8704799ee23c93a, type: 3}
+      propertyPath: Name
+      value: BluePotion
+      objectReference: {fileID: 0}
+    - target: {fileID: -1900068534496749198, guid: 6bda8edad3e7d354a8704799ee23c93a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b6071ca25ce9b4944b88da640690cd3a, type: 3}
+    - target: {fileID: -1900068534496749198, guid: 6bda8edad3e7d354a8704799ee23c93a, type: 3}
+      propertyPath: m_Color.b
+      value: 0.9176471
+      objectReference: {fileID: 0}
+    - target: {fileID: -1900068534496749198, guid: 6bda8edad3e7d354a8704799ee23c93a, type: 3}
+      propertyPath: m_Color.g
+      value: 0.10196079
+      objectReference: {fileID: 0}
+    - target: {fileID: -1900068534496749198, guid: 6bda8edad3e7d354a8704799ee23c93a, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3245008161452797125, guid: 6bda8edad3e7d354a8704799ee23c93a, type: 3}
       propertyPath: m_Name
       value: ItemBluePotion Variant
