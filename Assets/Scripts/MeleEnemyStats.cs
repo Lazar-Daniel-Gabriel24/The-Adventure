@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyStats : MonoBehaviour
+public class MeleEnemyStats : MonoBehaviour
 {
     public Animator animator;
+    public MeleEnemyAi enemyAi;  // Referință către scriptul MeleEnemyAi (setează în Inspector)
 
     public int maxHealth = 100;
     int currentHealth;
@@ -16,6 +17,9 @@ public class EnemyStats : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (currentHealth <= 0)
+            return;
+
         currentHealth -= damage;
         animator.SetTrigger("Hurt");
 
@@ -29,15 +33,17 @@ public class EnemyStats : MonoBehaviour
     {
         Debug.Log("Enemy died");
 
-        // Activează animația de moarte
         animator.SetBool("IsDead", true);
 
-        // Dezactivează coliziunea și acest script
         GetComponent<Collider2D>().enabled = false;
         this.enabled = false;
 
-        // După 1.5 secunde, dezactivează GameObject-ul complet
-        Invoke("DisableEnemy", 0.5f);
+        if (enemyAi != null)
+        {
+            enemyAi.isDead = true;  // Semnalizează inamicului că e mort
+        }
+
+        Invoke("DisableEnemy", 1.5f);
     }
 
     void DisableEnemy()

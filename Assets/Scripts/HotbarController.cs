@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -39,10 +39,16 @@ public class HotbarController : MonoBehaviour
         if (slot.currentItem != null)
         {
             Item item = slot.currentItem.GetComponent<Item>();
-            item.UseItem(); 
+            item.UseItem();
 
+            // Dacă itemul a fost consumat (destroyed), șterge referința
+            if (item == null)
+            {
+                slot.currentItem = null;
+            }
         }
     }
+
 
     public List<InventorySaveData> GetHotbarItems()
     {

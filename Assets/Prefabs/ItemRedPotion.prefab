@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 4426173597540944378}
   - component: {fileID: 3738503325575328160}
   - component: {fileID: 4815808476326206002}
-  - component: {fileID: -5017868969049966436}
   - component: {fileID: -1900068534496749198}
   - component: {fileID: 6501741119637033115}
+  - component: {fileID: 5031968697549734390}
   m_Layer: 5
   m_Name: ItemRedPotion
   m_TagString: Item
@@ -104,20 +104,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad5b114ebe34cee4d8e1d6e5197cff33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-5017868969049966436
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3245008161452797125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbf479ed6e96f5a4daff9fdc6c72f4f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ID: 1
-  Name: RedPotion
 --- !u!212 &-1900068534496749198
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -205,3 +191,18 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 1.285
+--- !u!114 &5031968697549734390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3245008161452797125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf9f4dd78b9121241a3c3f2f53ea7fc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 0
+  Name: RedPotion
+  healAmount: 30

@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -16,54 +15,76 @@ public class PlayerMovement : MonoBehaviour
     bool crouch = false;
 
     private bool isRolling = false;
-    private float rollTimer = 0f;
-
     private Rigidbody2D rb;
+    private Collider2D playerCollider;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        playerCollider = GetComponent<Collider2D>();
     }
 
     void Update()
     {
-        // Disable movement input while rolling
         if (!isRolling)
         {
             horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
             animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
-        }
 
-        // Jump
-        if (Input.GetButtonDown("Jump") && !isRolling)
-        {
-            jump = true;
-            animator.SetBool("IsJumping", true);
-        }
+            if (Input.GetButtonDown("Jump"))
+            {
+                jump = true;
+                animator.SetBool("IsJumping", true);
+            }
 
-        // Crouch
-        if (Input.GetButtonDown("Crouch") && !isRolling)
-        {
-            crouch = true;
-        }
-        else if (Input.GetButtonUp("Crouch"))
-        {
-            crouch = false;
-        }
+            if (Input.GetButtonDown("Crouch"))
+            {
+                crouch = true;
+            }
+            else if (Input.GetButtonUp("Crouch"))
+            {
+                crouch = false;
+            }
 
-        // Roll (Left Shift)
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !isRolling && controller.IsGrounded())
-        {
-            StartRoll();
+            if (Input.GetKeyDown(KeyCode.LeftShift) && controller.IsGrounded())
+            {
+                StartRoll();
+            }
         }
     }
 
     void StartRoll()
     {
-        isRolling = true;
-        rollTimer = rollDuration;
-        animator.SetTrigger("Roll"); // folosim Trigger �n loc de SetBool
+        if (!isRolling)
+        {
+            StartCoroutine(PerformRoll());
+        }
     }
+
+    private IEnumerator PerformRoll()
+    {
+        isRolling = true;
+        float direction = controller.GetFacingDirection();
+        animator.SetTrigger("Roll");
+
+        // 🔄 Schimbă layer-ul temporar
+        int defaultLayer = gameObject.layer;
+        gameObject.layer = LayerMask.NameToLayer("RollingPlayer");
+
+        float timer = 0f;
+        while (timer < rollDuration)
+        {
+            rb.velocity = new Vector2(direction * rollSpeed, rb.velocity.y);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // 🔄 Revine la layer-ul original
+        gameObject.layer = defaultLayer;
+
+        isRolling = false;
+    }
+
 
     public void OnLanding()
     {
@@ -72,21 +93,20 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isRolling)
+        if (!isRolling)
         {
-            float direction = controller.GetFacingDirection(); // +1 sau -1
-            rb.velocity = new Vector2(direction * rollSpeed, rb.velocity.y);
-
-            rollTimer -= Time.fixedDeltaTime;
-            if (rollTimer <= 0f)
-            {
-                isRolling = false;
-            }
-
-            return; // skip normal movement while rolling
+            controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
+            jump = false;
         }
+    }
 
-        controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
-        jump = false;
+    public IEnumerator SpeedBoost(float multiplier, float duration)
+    {
+        float originalSpeed = runSpeed;
+        runSpeed *= multiplier;
+
+        yield return new WaitForSeconds(duration);
+
+        runSpeed = originalSpeed;
     }
 }

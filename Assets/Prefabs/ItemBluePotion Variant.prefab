@@ -132,8 +132,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5031968697549734390, guid: 6bda8edad3e7d354a8704799ee23c93a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3245008161452797125, guid: 6bda8edad3e7d354a8704799ee23c93a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7209003806687304641}
   m_SourcePrefab: {fileID: 100100000, guid: 6bda8edad3e7d354a8704799ee23c93a, type: 3}
+--- !u!1 &2505543370890777149 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3245008161452797125, guid: 6bda8edad3e7d354a8704799ee23c93a, type: 3}
+  m_PrefabInstance: {fileID: 1138829963263524600}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7209003806687304641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2505543370890777149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 427f325d5574a3b48886621d7ec66b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 2
+  Name: BluePotion
+  boostAmount: 2
+  duration: 5

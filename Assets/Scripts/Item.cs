@@ -7,6 +7,7 @@ public class Item : MonoBehaviour
 {
     public int ID;
     public string Name;
+    internal int quantity;
 
     public virtual void UseItem()
     {

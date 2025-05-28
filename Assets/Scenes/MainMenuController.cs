@@ -8,15 +8,14 @@ public class MainMenuController : MonoBehaviour
     {
         string savePath = Path.Combine(Application.persistentDataPath, "saveData.json");
 
-        // Ștergem fișierul de salvare dacă există
-        if (File.Exists(savePath))
-        {
-            File.Delete(savePath);
-            Debug.Log("Fișierul saveData.json a fost șters.");
-        }
+        // Datele inițiale (poți adapta după nevoie)
+        string initialSaveData = "{\"playerPosition\":{\"x\":-17.53,\"y\":6.09,\"z\":-0.16},\"mapBoundary\":\"Room1\",\"inventorySaveData\":[],\"hotbarSaveData\":[]}";
 
-        // Opțional: dacă SaveController salvează automat în Start(), atunci nu trebuie să faci nimic în plus
+        // Resetează fișierul cu datele inițiale
+        File.WriteAllText(savePath, initialSaveData);
+        Debug.Log("Fișierul saveData.json a fost resetat cu datele inițiale.");
 
+        // Încarcă scena jocului
         SceneManager.LoadScene("SampleScene"); // înlocuiește cu numele scenei tale
     }
 
