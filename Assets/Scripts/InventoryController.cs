@@ -49,29 +49,37 @@ public class InventoryController : MonoBehaviour
     public List<InventorySaveData> GetInventoryItems()
     {
         List<InventorySaveData> invData = new List<InventorySaveData>();
-        foreach (Transform slotTransform in inventoryPanel.transform) 
+        foreach (Transform slotTransform in inventoryPanel.transform)
         {
             Slot slot = slotTransform.GetComponent<Slot>();
-            if(slot.currentItem != null)
+            if (slot.currentItem != null)
             {
                 Item item = slot.currentItem.GetComponent<Item>();
-                invData.Add(new InventorySaveData { itemID = item.ID, slotIndex = slotTransform.GetSiblingIndex() });
+                invData.Add(new InventorySaveData
+                {
+                    itemID = item.ID,
+                    slotIndex = slotTransform.GetSiblingIndex(),
+                    quantity = item.quantity  // adaugă cantitatea
+                });
             }
         }
         return invData;
     }
-    
+
+
     public void SetInventoryItems(List<InventorySaveData> inventorySaveData)
     {
         foreach (Transform child in inventoryPanel.transform)
         {
             Destroy(child.gameObject);
         }
+
         for (int i = 0; i < slotCount; i++)
         {
             Instantiate(slotPrefab, inventoryPanel.transform);
         }
-        foreach (InventorySaveData data in inventorySaveData) 
+
+        foreach (InventorySaveData data in inventorySaveData)
         {
             if (data.slotIndex < slotCount)
             {
@@ -81,11 +89,17 @@ public class InventoryController : MonoBehaviour
                 {
                     GameObject item = Instantiate(itemPrefab, slot.transform);
                     item.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+
+                    // Setăm cantitatea
+                    Item itemComponent = item.GetComponent<Item>();
+                    itemComponent.quantity = data.quantity;
+
                     slot.currentItem = item;
                 }
             }
         }
     }
+
 
 
 }

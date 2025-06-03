@@ -48,42 +48,48 @@ public class PlayerCombat : MonoBehaviour
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(AttackPoint.position, attackRange, enemyLayers);
         foreach (Collider2D enemy in hitEnemies)
         {
-            // Knockback direction (dinspre jucător spre inamic)
             Vector2 knockbackDir = (enemy.transform.position - transform.position).normalized;
 
-            // Încearcă să găsești MeleEnemyStats
+            // Damage la MeleEnemy
             MeleEnemyStats meleEnemy = enemy.GetComponent<MeleEnemyStats>();
             if (meleEnemy != null)
             {
                 meleEnemy.TakeDamage(attackDamage);
-
                 Rigidbody2D enemyRb = enemy.GetComponent<Rigidbody2D>();
                 if (enemyRb != null)
-                {
                     enemyRb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
-                }
 
                 continue;
             }
 
-            // Dacă nu, încearcă să găsești EnemyStats
+            // Damage la Enemy normal
             EnemyStats enemyStats = enemy.GetComponent<EnemyStats>();
             if (enemyStats != null)
             {
                 enemyStats.TakeDamage(attackDamage);
-
                 Rigidbody2D enemyRb = enemy.GetComponent<Rigidbody2D>();
                 if (enemyRb != null)
-                {
                     enemyRb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
-                }
 
                 continue;
             }
 
-            Debug.LogWarning($"Obiectul {enemy.name} nu are componenta MeleEnemyStats sau EnemyStats!");
+            // 🔥 Damage la Boss
+            BossHealth bossHealth = enemy.GetComponent<BossHealth>();
+            if (bossHealth != null)
+            {
+                bossHealth.TakeDamage(attackDamage);
+                Rigidbody2D enemyRb = enemy.GetComponent<Rigidbody2D>();
+                if (enemyRb != null)
+                    enemyRb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
+
+                continue;
+            }
+
+            Debug.LogWarning($"Obiectul {enemy.name} nu are componentă cunoscută pentru damage!");
         }
     }
+
 
     private void OnDrawGizmosSelected()
     {
