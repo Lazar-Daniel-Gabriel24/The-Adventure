@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 7598609300387032428}
   - component: {fileID: 3536210348149926247}
   - component: {fileID: 70366056253036528}
+  - component: {fileID: -8829231037347914889}
   m_Layer: 8
   m_Name: Bird
   m_TagString: Untagged
@@ -185,6 +186,7 @@ MonoBehaviour:
   nextWaypointDistance: 3
   detectionRange: 10
   enemyGFX: {fileID: 2619588698117063959}
+  patrolPoints: []
 --- !u!58 &3536210348149926247
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -247,3 +249,16 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &-8829231037347914889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4412320323840883744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5632f7952d21fcb439675f4ca3e9842e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xpReward: 25

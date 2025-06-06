@@ -8,5 +8,3 @@ public class InventorySaveData
     public int slotIndex;
     public int quantity;
 }
-
-

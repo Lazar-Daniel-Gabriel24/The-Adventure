@@ -33,18 +33,25 @@ public class MeleEnemyStats : MonoBehaviour
     {
         Debug.Log("Enemy died");
 
-        animator.SetBool("IsDead", true);
+        // Acordă XP jucătorului
+        EnemyXP enemyXP = GetComponent<EnemyXP>();
+        if (enemyXP != null)
+        {
+            enemyXP.Die();
+        }
 
+        animator.SetBool("IsDead", true);
         GetComponent<Collider2D>().enabled = false;
         this.enabled = false;
 
         if (enemyAi != null)
         {
-            enemyAi.isDead = true;  // Semnalizează inamicului că e mort
+            enemyAi.isDead = true;
         }
 
         Invoke("DisableEnemy", 1.5f);
     }
+
 
     void DisableEnemy()
     {

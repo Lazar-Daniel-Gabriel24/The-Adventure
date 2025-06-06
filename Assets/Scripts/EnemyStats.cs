@@ -29,16 +29,20 @@ public class EnemyStats : MonoBehaviour
     {
         Debug.Log("Enemy died");
 
-        // Activează animația de moarte
-        animator.SetBool("IsDead", true);
+        // Acordă XP jucătorului
+        EnemyXP enemyXP = GetComponent<EnemyXP>();
+        if (enemyXP != null)
+        {
+            enemyXP.Die();
+        }
 
-        // Dezactivează coliziunea și acest script
+        animator.SetBool("IsDead", true);
         GetComponent<Collider2D>().enabled = false;
         this.enabled = false;
 
-        // După 1.5 secunde, dezactivează GameObject-ul complet
         Invoke("DisableEnemy", 0.5f);
     }
+
 
     void DisableEnemy()
     {

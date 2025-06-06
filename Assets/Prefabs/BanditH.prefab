@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 815074711443608302}
   - component: {fileID: 4706070903226033524}
   - component: {fileID: 900375459388732086}
+  - component: {fileID: -6798963542936147988}
   m_Layer: 8
   m_Name: BanditH
   m_TagString: Untagged
@@ -286,3 +287,16 @@ MonoBehaviour:
   animator: {fileID: 5851111709687366426}
   enemyAi: {fileID: 4706070903226033524}
   maxHealth: 100
+--- !u!114 &-6798963542936147988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7561290735918557932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5632f7952d21fcb439675f4ca3e9842e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xpReward: 50

@@ -60,12 +60,20 @@ public class BossHealth : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
+        // XP-ul este acordat aici
+        EnemyXP enemyXP = GetComponent<EnemyXP>();
+        if (enemyXP != null)
+        {
+            enemyXP.Die(); // oferă XP jucătorului
+        }
+
         if (deathEffect != null)
             Instantiate(deathEffect, transform.position, Quaternion.identity);
 
         animator.SetTrigger("Die");
         Destroy(gameObject, 2f);
     }
+
 
     public void CastSpell()
     {

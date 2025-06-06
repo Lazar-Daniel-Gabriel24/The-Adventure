@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class ItemPickupUIController : MonoBehaviour
 {
-    public static ItemPickupUIController Instance {  get; private set; }
+    public static ItemPickupUIController Instance { get; private set; }
 
     public GameObject popupPrefab;
     public int maxPopups = 5;
@@ -38,7 +38,7 @@ public class ItemPickupUIController : MonoBehaviour
             itemImage.sprite = itemIcon;
         }
         activePopups.Enqueue(newPopup);
-        if(activePopups.Count > maxPopups)
+        if (activePopups.Count > maxPopups)
         {
             Destroy(activePopups.Dequeue());
         }
@@ -55,7 +55,7 @@ public class ItemPickupUIController : MonoBehaviour
         CanvasGroup canvasGroup = popup.GetComponent<CanvasGroup>();
         for (float timePassed = 0f; timePassed < 1f; timePassed += Time.deltaTime)
         {
-            if(popup == null) yield break;
+            if (popup == null) yield break;
             canvasGroup.alpha = 1f - timePassed;
             yield return null;
         }

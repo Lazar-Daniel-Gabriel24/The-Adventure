@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System.Collections.Generic;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -8,16 +9,29 @@ public class MainMenuController : MonoBehaviour
     {
         string savePath = Path.Combine(Application.persistentDataPath, "saveData.json");
 
-        // Datele inițiale (poți adapta după nevoie)
-        string initialSaveData = "{\"playerPosition\":{\"x\":-17.53,\"y\":6.09,\"z\":-0.16},\"mapBoundary\":\"Room1\",\"inventorySaveData\":[],\"hotbarSaveData\":[]}";
+        SaveGame initialSaveData = new SaveGame
+        {
+            playerPosition = new Vector3(-17.53f, 6.09f, -0.16f),
+            mapBoundary = "Room1",
+            inventorySaveData = new List<InventorySaveData>(),
+            hotbarSaveData = new List<InventorySaveData>(),
+            currentHealth = 100,
+            maxHealth = 100,
+            level = 1,
+            currentXP = 0,
+            xpToNextLevel = 100,
+            damagePoints = 0,
+            speedPoints = 0,
+            healthPoints = 0,
+            availablePoints = 0
+        };
 
-        // Resetează fișierul cu datele inițiale
-        File.WriteAllText(savePath, initialSaveData);
+        File.WriteAllText(savePath, JsonUtility.ToJson(initialSaveData));
         Debug.Log("Fișierul saveData.json a fost resetat cu datele inițiale.");
 
-        // Încarcă scena jocului
-        SceneManager.LoadScene("SampleScene"); // înlocuiește cu numele scenei tale
+        SceneManager.LoadScene("SampleScene");
     }
+
 
     public void LoadGame()
     {

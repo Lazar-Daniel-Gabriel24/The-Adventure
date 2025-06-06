@@ -17,7 +17,7 @@ public class Item : MonoBehaviour
     public virtual void PickUp()
     {
         Sprite itemIcon = GetComponent<SpriteRenderer>().sprite;
-        if(ItemPickupUIController.Instance != null )
+        if (ItemPickupUIController.Instance != null)
         {
             ItemPickupUIController.Instance.ShowItemPickup(Name, itemIcon);
         }
