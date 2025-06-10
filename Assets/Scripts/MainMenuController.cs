@@ -7,6 +7,10 @@ public class MainMenuController : MonoBehaviour
 {
     public void NewGame()
     {
+        // Resetează PlayerPrefs pentru a face itemele disponibile din nou
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+
         string savePath = Path.Combine(Application.persistentDataPath, "saveData.json");
 
         SaveGame initialSaveData = new SaveGame
@@ -31,6 +35,7 @@ public class MainMenuController : MonoBehaviour
 
         SceneManager.LoadScene("SampleScene");
     }
+
 
 
     public void LoadGame()

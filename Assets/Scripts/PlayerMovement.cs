@@ -10,6 +10,8 @@ public class PlayerMovement : MonoBehaviour
     public float rollSpeed = 20f;
     public float rollDuration = 0.5f;
 
+    public float doubleJumpVelocity = 10f;
+
     float horizontalMove = 0f;
     bool jump = false;
     bool crouch = false;
@@ -17,6 +19,9 @@ public class PlayerMovement : MonoBehaviour
     private bool isRolling = false;
     private Rigidbody2D rb;
     private Collider2D playerCollider;
+
+    private bool canDoubleJump = false;
+    private bool hasDoubleJumped = false;
 
     void Start()
     {
@@ -33,8 +38,20 @@ public class PlayerMovement : MonoBehaviour
 
             if (Input.GetButtonDown("Jump"))
             {
-                jump = true;
-                animator.SetBool("IsJumping", true);
+                if (controller.IsGrounded())
+                {
+                    jump = true;
+                    hasDoubleJumped = false;
+                    animator.SetBool("IsJumping", true);
+                }
+                else if (canDoubleJump && !hasDoubleJumped)
+                {
+                    jump = true;
+                    hasDoubleJumped = true;
+                    animator.SetBool("IsJumping", true);
+
+                    rb.velocity = new Vector2(rb.velocity.x, doubleJumpVelocity);
+                }
             }
 
             if (Input.GetButtonDown("Crouch"))
@@ -67,7 +84,6 @@ public class PlayerMovement : MonoBehaviour
         float direction = controller.GetFacingDirection();
         animator.SetTrigger("Roll");
 
-        // 🔄 Schimbă layer-ul temporar
         int defaultLayer = gameObject.layer;
         gameObject.layer = LayerMask.NameToLayer("RollingPlayer");
 
@@ -79,16 +95,15 @@ public class PlayerMovement : MonoBehaviour
             yield return null;
         }
 
-        // 🔄 Revine la layer-ul original
         gameObject.layer = defaultLayer;
 
         isRolling = false;
     }
 
-
     public void OnLanding()
     {
         animator.SetBool("IsJumping", false);
+        hasDoubleJumped = false;
     }
 
     void FixedUpdate()
@@ -97,6 +112,12 @@ public class PlayerMovement : MonoBehaviour
         {
             controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
             jump = false;
+
+            if (controller.IsGrounded())
+            {
+                hasDoubleJumped = false;
+                animator.SetBool("IsJumping", false);
+            }
         }
     }
 
@@ -108,5 +129,28 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(duration);
 
         runSpeed = originalSpeed;
+    }
+
+    public void EnableDoubleJump()
+    {
+        canDoubleJump = true;
+        Debug.Log("Double jump activated!");
+    }
+
+
+
+
+    public bool HasDoubleJumpAbility()
+    {
+        return canDoubleJump;
+    }
+
+    public void SetDoubleJumpAbility(bool value)
+    {
+        canDoubleJump = value;
+        if (value)
+        {
+            Debug.Log("Double jump ability loaded!");
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿// CharacterController2D.cs
+using UnityEngine;
 using UnityEngine.Events;
 
 public class CharacterController2D : MonoBehaviour
@@ -134,13 +135,11 @@ public class CharacterController2D : MonoBehaviour
         transform.localScale = theScale;
     }
 
-    // ✅ Adăugat pentru a fi accesibil din PlayerMovement
     public bool IsGrounded()
     {
         return m_Grounded;
     }
 
-    // ✅ Returnează direcția în care se uită playerul: 1 (dreapta), -1 (stânga)
     public float GetFacingDirection()
     {
         return m_FacingRight ? 1f : -1f;

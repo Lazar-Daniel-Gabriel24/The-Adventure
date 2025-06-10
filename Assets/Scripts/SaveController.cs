@@ -43,6 +43,7 @@ public class SaveController : MonoBehaviour
 
     public void SaveGame()
     {
+      
         if (playerStats == null)
         {
             Debug.LogError("Cannot save game: PlayerStats is null.");
@@ -65,6 +66,7 @@ public class SaveController : MonoBehaviour
 
         SaveGame saveGame = new SaveGame
         {
+
             playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position,
             // Add a null check for CinemachineConfiner and its bounding shape
             mapBoundary = (FindAnyObjectByType<CinemachineConfiner>() != null && FindAnyObjectByType<CinemachineConfiner>().m_BoundingShape2D != null) ? FindAnyObjectByType<CinemachineConfiner>().m_BoundingShape2D.gameObject.name : "DefaultMapBoundary", // Provide a default or handle appropriately
@@ -81,6 +83,11 @@ public class SaveController : MonoBehaviour
             healthPoints = playerStats.healthPoints,
             availablePoints = playerStats.availablePoints
         };
+        PlayerMovement movement = FindObjectOfType<PlayerMovement>();
+        if (movement != null)
+        {
+            saveGame.hasDoubleJump = movement.HasDoubleJumpAbility();
+        }
 
         File.WriteAllText(saveLocation, JsonUtility.ToJson(saveGame));
         Debug.Log("Game Saved!");
@@ -149,6 +156,11 @@ public class SaveController : MonoBehaviour
             playerStats.availablePoints = saveData.availablePoints;
 
             playerStats.ApplyUpgrades(); // Aplică upgrade-urile
+            PlayerMovement movement = player.GetComponent<PlayerMovement>();
+            if (movement != null)
+            {
+                movement.SetDoubleJumpAbility(saveData.hasDoubleJump);
+            }
 
             // Ensure playerHealth exists before accessing it
             if (playerStats.playerHealth != null)

@@ -1,29 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-
+    [Header("Health Settings")]
     public int maxHealth = 100;
     public int currentHealth;
     public HealthBar healthBar;
-    // Start is called before the first frame update
+
+    [Header("UI Reference")]
+    public DeadScreenUI deadScreenUI;
+
     void Start()
     {
         currentHealth = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
+        if (healthBar != null)
+        {
+            healthBar.SetMaxHealth(maxHealth);
+        }
+        else
+        {
+            Debug.LogError("HealthBar reference not set in PlayerHealth!");
+        }
     }
 
-    
-
     public void TakeDamage(int damage)
-    { 
-        currentHealth -= damage; 
-        healthBar.SetHealth(currentHealth);
+    {
+        currentHealth -= damage;
+        if (healthBar != null)
+            healthBar.SetHealth(currentHealth);
+
         if (currentHealth <= 0)
         {
-            Destroy(gameObject);
+            Debug.Log("Player has died.");
+            if (deadScreenUI != null)
+            {
+                deadScreenUI.ShowDeadScreen();
+            }
+            else
+            {
+                Debug.LogError("DeadScreenUI reference not set in PlayerHealth!");
+            }
         }
     }
 
@@ -31,7 +47,7 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        healthBar.SetHealth(currentHealth);
+        if (healthBar != null)
+            healthBar.SetHealth(currentHealth);
     }
-
 }

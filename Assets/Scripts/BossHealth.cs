@@ -18,6 +18,9 @@ public class BossHealth : MonoBehaviour
     private float lastSpellTime = -10f;
     public float spellCooldown = 3f;
 
+    // Referință pentru end screen UI (poate fi un panel în canvas)
+    public GameObject endScreenPanel;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -27,6 +30,8 @@ public class BossHealth : MonoBehaviour
             if (player != null)
                 target = player.transform;
         }
+        if (endScreenPanel != null)
+            endScreenPanel.SetActive(false);  // Ascunde end screen la început
     }
 
     public void TakeDamage(int damage)
@@ -60,7 +65,6 @@ public class BossHealth : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
-        // XP-ul este acordat aici
         EnemyXP enemyXP = GetComponent<EnemyXP>();
         if (enemyXP != null)
         {
@@ -71,9 +75,21 @@ public class BossHealth : MonoBehaviour
             Instantiate(deathEffect, transform.position, Quaternion.identity);
 
         animator.SetTrigger("Die");
-        Destroy(gameObject, 2f);
+        // În loc să distrugi instantaneu, așteaptă animația și apoi afișează end screen
+        Invoke(nameof(ShowEndScreen), 2f);  // 2 secunde cât durează animația de moarte
     }
 
+    private void ShowEndScreen()
+    {
+        if (endScreenPanel != null)
+        {
+            endScreenPanel.SetActive(true);
+        }
+        // Poți opri timpul aici, dacă vrei
+        Time.timeScale = 0f;
+        // Distruge bossul după ce afișezi end screen (sau poți face asta după ce jucătorul apasă ceva)
+        Destroy(gameObject);
+    }
 
     public void CastSpell()
     {
