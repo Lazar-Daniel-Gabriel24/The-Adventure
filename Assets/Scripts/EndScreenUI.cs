@@ -29,11 +29,9 @@ public class EndScreenUI : MonoBehaviour
     public void QuitGame()
     {
         Time.timeScale = 1f;
-        Application.Quit();
+        SceneManager.LoadScene("MainMenu"); // înlocuiește cu numele exact al scenei tale de meniu
 
-        // Dacă ești în Editor:
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
+        
     }
+
 }

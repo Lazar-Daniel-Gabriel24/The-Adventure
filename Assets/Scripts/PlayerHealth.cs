@@ -31,6 +31,11 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+
+            GetComponent<PlayerMovement>().enabled = false;
+            GetComponent<PlayerCombat>().enabled = false;
+
+
             Debug.Log("Player has died.");
             if (deadScreenUI != null)
             {
