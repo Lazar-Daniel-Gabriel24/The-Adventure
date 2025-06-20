@@ -5,41 +5,50 @@ using Pathfinding;
 
 public class MeleEnemyAi : MonoBehaviour
 {
-    public Transform target; // Jucătorul
+    [Header("Target & Movement")]
+    public Transform target;
     public float Speed = 200f;
+    public float maxSpeed = 2f;
     public float nextWaypointDistance = 1f;
     public float detectionRange = 10f;
     public float attackRange = 1f;
 
+    [Header("Visual & Effects")]
     public Transform enemyGFX;
     public Transform AttackPoint;
     public LayerMask playerLayer;
 
+    [Header("Combat Settings")]
+    public int attackDamage = 20;
+    public float attackCooldown = 1f;
+
+    [Header("Patrolling")]
+    public Transform[] patrolPoints;
+
+    [Header("Contact Damage")]
+    public float hitCooldown = 1f;
+    public int contactDamage = 10;
+
     [HideInInspector]
     public bool isDead = false;
 
+    private bool isKnockedback = false;
+    private float knockbackDuration = 0.3f;
+    private float knockbackTimer = 0f;
+
+    private bool isAttacking = false; // ✅ Nou
+
+    private float nextAttackTime = 0f;
+    private float lastFlipX = 1f;
     private int currentPatrolIndex = 0;
     private bool isPatrolling = true;
-
     private Path path;
     private int currentWaypoint = 0;
+    private float lastHitTime = -999f;
 
     private Seeker seeker;
     private Rigidbody2D rb;
     private Animator animator;
-
-    private float lastFlipX = 1f;
-
-    public int attackDamage = 20;
-    public float attackCooldown = 1f;
-    private float nextAttackTime = 0f;
-
-    public Transform[] patrolPoints;
-
-    // 🔻 Damage on collision
-    private float lastHitTime = -999f;
-    public float hitCooldown = 1f;
-    public int contactDamage = 10;
 
     void Start()
     {
@@ -89,14 +98,44 @@ public class MeleEnemyAi : MonoBehaviour
             return;
         }
 
+        if (isKnockedback)
+        {
+            knockbackTimer -= Time.fixedDeltaTime;
+            if (knockbackTimer <= 0f)
+                isKnockedback = false;
+
+            animator.SetFloat("Speed", 0f);
+            return;
+        }
+
+        if (isAttacking) // ✅ Nu se mișcă dacă e în animația de atac
+        {
+            rb.velocity = Vector2.zero;
+            animator.SetFloat("Speed", 0f);
+            return;
+        }
+
+        float distanceToPlayer = Vector2.Distance(rb.position, target.position);
+
         if (isPatrolling)
         {
             Patrol();
+        }
+        else if (distanceToPlayer <= attackRange)
+        {
+            rb.velocity = Vector2.zero;
+            animator.SetFloat("Speed", 0f);
+            TryAttack();
         }
         else
         {
             FollowPlayer();
             TryAttack();
+        }
+
+        if (rb.velocity.magnitude > maxSpeed)
+        {
+            rb.velocity = rb.velocity.normalized * maxSpeed;
         }
     }
 
@@ -128,8 +167,17 @@ public class MeleEnemyAi : MonoBehaviour
             return;
         }
 
+        float distanceToTarget = Vector2.Distance(rb.position, target.position);
+        if (distanceToTarget <= attackRange)
+        {
+            rb.velocity = Vector2.zero;
+            animator.SetFloat("Speed", 0f);
+            return;
+        }
+
         Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
         Vector2 force = direction * Speed * Time.deltaTime;
+
         rb.AddForce(force);
 
         FlipSprite(rb.velocity.x);
@@ -145,20 +193,45 @@ public class MeleEnemyAi : MonoBehaviour
 
     void TryAttack()
     {
-        if (Time.time < nextAttackTime) return;
+        if (Time.time < nextAttackTime || isAttacking) return;
 
         Collider2D hitPlayer = Physics2D.OverlapCircle(AttackPoint.position, attackRange, playerLayer);
 
         if (hitPlayer != null)
         {
             animator.SetTrigger("Attack");
-            hitPlayer.GetComponent<PlayerHealth>()?.TakeDamage(attackDamage);
             nextAttackTime = Time.time + attackCooldown;
+            isAttacking = true; // ✅ intră în starea de atac
         }
+        else
+        {
+            animator.ResetTrigger("Attack");
+        }
+    }
+
+    // ❗ Apelată din Animation Event în momentul în care lovește
+    public void DealDamage()
+    {
+        if (isDead) return;
+
+        Collider2D hitPlayer = Physics2D.OverlapCircle(AttackPoint.position, attackRange, playerLayer);
+
+        if (hitPlayer != null)
+        {
+            hitPlayer.GetComponent<PlayerHealth>()?.TakeDamage(attackDamage);
+        }
+    }
+
+    // ✅ Apelată la sfârșitul animației de atac (Animation Event)
+    public void EndAttack()
+    {
+        isAttacking = false;
     }
 
     void FlipSprite(float moveX)
     {
+        if (isKnockedback || isAttacking) return;
+
         if (moveX > 0.01f && lastFlipX != -1f)
         {
             enemyGFX.localScale = new Vector3(-1f, 1f, 1f);
@@ -171,7 +244,6 @@ public class MeleEnemyAi : MonoBehaviour
         }
     }
 
-    // 🔻 Damage player on contact
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (isDead) return;
@@ -183,19 +255,21 @@ public class MeleEnemyAi : MonoBehaviour
 
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(attackDamage);
+                playerHealth.TakeDamage(contactDamage);
             }
 
             if (playerRb != null)
             {
                 Vector2 knockbackDirection = (collision.transform.position - transform.position).normalized;
-                playerRb.AddForce(knockbackDirection * 10f, ForceMode2D.Impulse); // poți ajusta forța
+                rb.AddForce(-knockbackDirection * 0.1f, ForceMode2D.Impulse);
+
+                isKnockedback = true;
+                knockbackTimer = knockbackDuration;
             }
         }
     }
 
-
-    private void OnDrawGizmosSelected()
+    void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
@@ -216,5 +290,4 @@ public class MeleEnemyAi : MonoBehaviour
             Gizmos.DrawWireSphere(AttackPoint.position, attackRange);
         }
     }
-
 }

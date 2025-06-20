@@ -25235,7 +25235,7 @@ Transform:
   m_GameObject: {fileID: 1090379135}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.8, y: -0.6, z: 0}
+  m_LocalPosition: {x: 12.17, y: -0.92, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -43785,21 +43785,53 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 486346929}
     m_Modifications:
+    - target: {fileID: 815074711443608302, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 815074711443608302, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
+      propertyPath: m_BodyType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 815074711443608302, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 815074711443608302, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4706070903226033524, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
+      propertyPath: Speed
+      value: 500
+      objectReference: {fileID: 0}
     - target: {fileID: 4706070903226033524, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
       propertyPath: target
       value: 
       objectReference: {fileID: 850608750}
+    - target: {fileID: 4706070903226033524, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
+      propertyPath: attackRange
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4706070903226033524, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
+      propertyPath: detectionRange
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5742615242560670970, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7561290735918557932, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
       propertyPath: m_Name
       value: BanditH
       objectReference: {fileID: 0}
     - target: {fileID: 7832948010214035123, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.07
+      value: -14.22
       objectReference: {fileID: 0}
     - target: {fileID: 7832948010214035123, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.09
+      value: -1.01
       objectReference: {fileID: 0}
     - target: {fileID: 7832948010214035123, guid: 64333c87dff51cb449a5e18bbeb4c0c3, type: 3}
       propertyPath: m_LocalPosition.z

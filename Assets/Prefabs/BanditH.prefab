@@ -232,7 +232,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -258,6 +258,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   Speed: 200
+  maxSpeed: 2
   nextWaypointDistance: 1
   detectionRange: 7
   attackRange: 0.7
@@ -266,12 +267,12 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  isDead: 0
   attackDamage: 20
-  attackCooldown: 1
+  attackCooldown: 5
   patrolPoints: []
   hitCooldown: 1
   contactDamage: 10
+  isDead: 0
 --- !u!114 &900375459388732086
 MonoBehaviour:
   m_ObjectHideFlags: 0
