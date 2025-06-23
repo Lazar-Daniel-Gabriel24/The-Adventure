@@ -27,12 +27,14 @@ public class HotbarController : MonoBehaviour
     {
         for (int i = 0; i < slotcount; i++)
         {
-            if (Keyboard.current[hotbarKeys[i]].wasPressedThisFrame)
+            string actionName = $"HotbarSlot{i + 1}";
+            if (KeybindSettings.Instance.GetKeyDown(actionName))
             {
                 UseItemInSlot(i);
             }
         }
     }
+
     void UseItemInSlot(int index)
     {
         Slot slot = hotbarPanel.transform.GetChild(index).GetComponent<Slot>();

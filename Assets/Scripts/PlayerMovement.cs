@@ -33,10 +33,19 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!isRolling)
         {
-            horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
+            horizontalMove = 0f;
+            if (KeybindSettings.Instance.GetKey("WalkingLeft"))
+            {
+                horizontalMove = -runSpeed;
+            }
+            else if (KeybindSettings.Instance.GetKey("WalkingRight"))
+            {
+                horizontalMove = runSpeed;
+            }
+
             animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
 
-            if (Input.GetButtonDown("Jump"))
+            if (KeybindSettings.Instance.GetKeyDown("Jump"))
             {
                 if (controller.IsGrounded())
                 {
@@ -54,16 +63,16 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
-            if (Input.GetButtonDown("Crouch"))
+            if (KeybindSettings.Instance.GetKeyDown("Crouch"))
             {
                 crouch = true;
             }
-            else if (Input.GetButtonUp("Crouch"))
+            else if (KeybindSettings.Instance.GetKeyUp("Crouch"))
             {
                 crouch = false;
             }
 
-            if (Input.GetKeyDown(KeyCode.LeftShift) && controller.IsGrounded())
+            if (KeybindSettings.Instance.GetKeyDown("Roll") && controller.IsGrounded())
             {
                 StartRoll();
             }
@@ -136,9 +145,6 @@ public class PlayerMovement : MonoBehaviour
         canDoubleJump = true;
         Debug.Log("Double jump activated!");
     }
-
-
-
 
     public bool HasDoubleJumpAbility()
     {

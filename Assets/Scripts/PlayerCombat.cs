@@ -33,7 +33,7 @@ public class PlayerCombat : MonoBehaviour
     {
         if (Time.time >= nextAttackTime)
         {
-            if (Input.GetMouseButtonDown(0)) // click stânga
+            if (FindObjectOfType<KeybindSettings>().GetKeyDown("Attack"))
             {
                 Attack();
                 nextAttackTime = Time.time + 1f / attackRate;

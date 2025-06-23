@@ -5,9 +5,11 @@ using System.Collections.Generic;
 
 public class MainMenuController : MonoBehaviour
 {
+    public GameObject mainMenuCanvas;
+    public GameObject settingsCanvas;
+
     public void NewGame()
     {
-        // Resetează PlayerPrefs pentru a face itemele disponibile din nou
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
 
@@ -36,15 +38,13 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene("SampleScene");
     }
 
-
-
     public void LoadGame()
     {
         string savePath = Path.Combine(Application.persistentDataPath, "saveData.json");
 
         if (File.Exists(savePath))
         {
-            SceneManager.LoadScene("SampleScene"); // SaveController va face Load automat
+            SceneManager.LoadScene("SampleScene");
         }
         else
         {
@@ -55,6 +55,18 @@ public class MainMenuController : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
-        Debug.Log("Quit Game"); // pentru editor
+        Debug.Log("Quit Game");
+    }
+
+    public void OpenSettings()
+    {
+        mainMenuCanvas.SetActive(false);
+        settingsCanvas.SetActive(true);
+    }
+
+    public void CloseSettings()
+    {
+        settingsCanvas.SetActive(false);
+        mainMenuCanvas.SetActive(true);
     }
 }
