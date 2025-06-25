@@ -51,13 +51,13 @@ public class PlayerMovement : MonoBehaviour
                 {
                     jump = true;
                     hasDoubleJumped = false;
-                    animator.SetBool("IsJumping", true);
+                    animator.SetTrigger("JumpTrigger"); // Trigger animatie
                 }
                 else if (canDoubleJump && !hasDoubleJumped)
                 {
                     jump = true;
                     hasDoubleJumped = true;
-                    animator.SetBool("IsJumping", true);
+                    animator.SetTrigger("JumpTrigger"); // Trigger si la double jump
 
                     rb.velocity = new Vector2(rb.velocity.x, doubleJumpVelocity);
                 }
@@ -111,9 +111,16 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnLanding()
     {
-        animator.SetBool("IsJumping", false);
+        animator.ResetTrigger("JumpTrigger");
+
+        if (Mathf.Abs(horizontalMove) > 0.01f)
+            animator.Play("Player_run");
+        else
+            animator.Play("Player_idle");
+
         hasDoubleJumped = false;
     }
+
 
     void FixedUpdate()
     {
@@ -125,7 +132,6 @@ public class PlayerMovement : MonoBehaviour
             if (controller.IsGrounded())
             {
                 hasDoubleJumped = false;
-                animator.SetBool("IsJumping", false);
             }
         }
     }
