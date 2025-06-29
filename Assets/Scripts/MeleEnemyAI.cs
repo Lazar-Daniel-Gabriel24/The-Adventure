@@ -246,7 +246,7 @@ public class MeleEnemyAi : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (isDead) return;
+        if (isDead || isAttacking) return; // ✅ Ignoră coliziunile în timpul atacului
 
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -268,6 +268,7 @@ public class MeleEnemyAi : MonoBehaviour
             }
         }
     }
+
 
     void OnDrawGizmosSelected()
     {
