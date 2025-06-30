@@ -29,6 +29,12 @@ public class MeleEnemyAi : MonoBehaviour
     public float hitCooldown = 1f;
     public int contactDamage = 10;
 
+    [Header("Ground Check")]
+    public Transform groundCheckLeft;
+    public Transform groundCheckRight;
+    public float groundCheckRadius = 0.1f;
+    public LayerMask groundLayer;
+
     [HideInInspector]
     public bool isDead = false;
 
@@ -36,8 +42,7 @@ public class MeleEnemyAi : MonoBehaviour
     private float knockbackDuration = 0.3f;
     private float knockbackTimer = 0f;
 
-    private bool isAttacking = false; // ✅ Nou
-
+    private bool isAttacking = false;
     private float nextAttackTime = 0f;
     private float lastFlipX = 1f;
     private int currentPatrolIndex = 0;
@@ -50,12 +55,14 @@ public class MeleEnemyAi : MonoBehaviour
     private Rigidbody2D rb;
     private Animator animator;
 
+    private float lostPlayerTimer = 0f;
+    private float lostPlayerThreshold = 2f; // timp până când inamicul renunță la urmărire
+
     void Start()
     {
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-
         InvokeRepeating("UpdatePath", 0f, 0.5f);
     }
 
@@ -68,15 +75,21 @@ public class MeleEnemyAi : MonoBehaviour
         if (distanceToTarget <= detectionRange)
         {
             isPatrolling = false;
+            lostPlayerTimer = 0f;
 
             if (seeker.IsDone())
                 seeker.StartPath(rb.position, target.position, OnPathComplete);
         }
         else
         {
-            isPatrolling = true;
-            path = null;
-            currentWaypoint = 0;
+            lostPlayerTimer += Time.deltaTime;
+
+            if (lostPlayerTimer >= lostPlayerThreshold)
+            {
+                isPatrolling = true;
+                path = null;
+                currentWaypoint = 0;
+            }
         }
     }
 
@@ -108,7 +121,14 @@ public class MeleEnemyAi : MonoBehaviour
             return;
         }
 
-        if (isAttacking) // ✅ Nu se mișcă dacă e în animația de atac
+        if (isAttacking)
+        {
+            rb.velocity = Vector2.zero;
+            animator.SetFloat("Speed", 0f);
+            return;
+        }
+
+        if (!IsGrounded())
         {
             rb.velocity = Vector2.zero;
             animator.SetFloat("Speed", 0f);
@@ -127,10 +147,18 @@ public class MeleEnemyAi : MonoBehaviour
             animator.SetFloat("Speed", 0f);
             TryAttack();
         }
-        else
+        else if (distanceToPlayer <= detectionRange)
         {
             FollowPlayer();
             TryAttack();
+        }
+        else
+        {
+            // Dacă jucătorul e prea departe, să revină la patrulare
+            isPatrolling = true;
+            path = null;
+            currentWaypoint = 0;
+            Patrol();
         }
 
         if (rb.velocity.magnitude > maxSpeed)
@@ -145,6 +173,20 @@ public class MeleEnemyAi : MonoBehaviour
 
         Transform patrolTarget = patrolPoints[currentPatrolIndex];
         Vector2 direction = ((Vector2)patrolTarget.position - rb.position).normalized;
+
+        float horizontalMove = direction.x;
+
+        // Verifică marginea
+        bool groundAhead = horizontalMove > 0 ?
+            Physics2D.OverlapCircle(groundCheckRight.position, groundCheckRadius, groundLayer) :
+            Physics2D.OverlapCircle(groundCheckLeft.position, groundCheckRadius, groundLayer);
+
+        if (!groundAhead)
+        {
+            currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
+            return;
+        }
+
         Vector2 force = direction * Speed * Time.deltaTime;
         rb.AddForce(force);
 
@@ -201,7 +243,7 @@ public class MeleEnemyAi : MonoBehaviour
         {
             animator.SetTrigger("Attack");
             nextAttackTime = Time.time + attackCooldown;
-            isAttacking = true; // ✅ intră în starea de atac
+            isAttacking = true;
         }
         else
         {
@@ -209,7 +251,6 @@ public class MeleEnemyAi : MonoBehaviour
         }
     }
 
-    // ❗ Apelată din Animation Event în momentul în care lovește
     public void DealDamage()
     {
         if (isDead) return;
@@ -222,7 +263,6 @@ public class MeleEnemyAi : MonoBehaviour
         }
     }
 
-    // ✅ Apelată la sfârșitul animației de atac (Animation Event)
     public void EndAttack()
     {
         isAttacking = false;
@@ -246,7 +286,7 @@ public class MeleEnemyAi : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (isDead || isAttacking) return; // ✅ Ignoră coliziunile în timpul atacului
+        if (isDead || isAttacking) return;
 
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -269,6 +309,12 @@ public class MeleEnemyAi : MonoBehaviour
         }
     }
 
+    bool IsGrounded()
+    {
+        bool groundedLeft = Physics2D.OverlapCircle(groundCheckLeft.position, groundCheckRadius, groundLayer);
+        bool groundedRight = Physics2D.OverlapCircle(groundCheckRight.position, groundCheckRadius, groundLayer);
+        return groundedLeft && groundedRight;
+    }
 
     void OnDrawGizmosSelected()
     {
@@ -289,6 +335,18 @@ public class MeleEnemyAi : MonoBehaviour
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(AttackPoint.position, attackRange);
+        }
+
+        if (groundCheckLeft != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(groundCheckLeft.position, groundCheckRadius);
+        }
+
+        if (groundCheckRight != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(groundCheckRight.position, groundCheckRadius);
         }
     }
 }

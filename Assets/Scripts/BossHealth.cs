@@ -40,7 +40,7 @@ public class BossHealth : MonoBehaviour
 
         health -= damage;
 
-        if (!isEnraged && health <= 250)
+        if (!isEnraged && health <= 500)
         {
             isEnraged = true;
             isVulnerable = false;
