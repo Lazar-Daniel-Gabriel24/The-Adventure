@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -10,9 +10,14 @@ public class PlayerHealth : MonoBehaviour
     [Header("UI Reference")]
     public DeadScreenUI deadScreenUI;
 
+    private PlayerAudioAdvanced playerAudio;
+    private bool isDead = false;  // flag pentru stare mort
+
     void Start()
     {
         currentHealth = maxHealth;
+        playerAudio = GetComponent<PlayerAudioAdvanced>();
+
         if (healthBar != null)
         {
             healthBar.SetMaxHealth(maxHealth);
@@ -25,18 +30,29 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (isDead) return; // dacă e mort, nu mai primește damage
+
         currentHealth -= damage;
+
         if (healthBar != null)
             healthBar.SetHealth(currentHealth);
 
+        playerAudio?.PlayHurtSound();
+
         if (currentHealth <= 0)
         {
+            isDead = true;
 
             GetComponent<PlayerMovement>().enabled = false;
             GetComponent<PlayerCombat>().enabled = false;
 
-
             Debug.Log("Player has died.");
+
+            // oprește toate sunetele active înainte să dai play la sunetul de moarte
+            playerAudio?.StopAllAudio();
+
+            playerAudio?.PlayDeathSound();
+
             if (deadScreenUI != null)
             {
                 deadScreenUI.ShowDeadScreen();
@@ -50,9 +66,14 @@ public class PlayerHealth : MonoBehaviour
 
     public void Heal(int amount)
     {
+        if (isDead) return; // nu vindecă dacă e mort
+
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
         if (healthBar != null)
             healthBar.SetHealth(currentHealth);
+
+        playerAudio?.PlayHealSound();
     }
 }

@@ -12,20 +12,24 @@ public class PlayerCombat : MonoBehaviour
     public float attackRange = 0.5f;
     public int attackDamage = 40;
     public float attackRate = 2f;
-    public float knockbackForce = 7f; // Knockback aplicat inamicului
+    public float knockbackForce = 7f;
+
     private Coroutine damageBoostRoutine;
-    float nextAttackTime = 0f;
+    private float nextAttackTime = 0f;
     private int baseAttackDamage;
+
+    private PlayerAudioAdvanced playerAudio;
+
     void Start()
     {
         baseAttackDamage = attackDamage;
+        playerAudio = GetComponent<PlayerAudioAdvanced>();
     }
+
     public IEnumerator DamageBoost(int bonus, float duration)
     {
         attackDamage += bonus;
-
         yield return new WaitForSeconds(duration);
-
         attackDamage = baseAttackDamage;
     }
 
@@ -44,8 +48,10 @@ public class PlayerCombat : MonoBehaviour
     void Attack()
     {
         animator.SetTrigger("Attack");
+        playerAudio?.PlayAttackSound();
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(AttackPoint.position, attackRange, enemyLayers);
+
         foreach (Collider2D enemy in hitEnemies)
         {
             Vector2 knockbackDir = (enemy.transform.position - transform.position).normalized;
@@ -59,6 +65,7 @@ public class PlayerCombat : MonoBehaviour
                 if (enemyRb != null)
                     enemyRb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
 
+                playerAudio?.PlayHitSound(); // Sunet de hit
                 continue;
             }
 
@@ -71,10 +78,11 @@ public class PlayerCombat : MonoBehaviour
                 if (enemyRb != null)
                     enemyRb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
 
+                playerAudio?.PlayHitSound(); // Sunet de hit
                 continue;
             }
 
-            // 🔥 Damage la Boss
+            // Damage la Boss
             BossHealth bossHealth = enemy.GetComponent<BossHealth>();
             if (bossHealth != null)
             {
@@ -83,6 +91,7 @@ public class PlayerCombat : MonoBehaviour
                 if (enemyRb != null)
                     enemyRb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
 
+                playerAudio?.PlayHitSound(); // Sunet de hit
                 continue;
             }
 
@@ -90,13 +99,9 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-
     private void OnDrawGizmosSelected()
     {
-        if (AttackPoint == null)
-        {
-            return;
-        }
+        if (AttackPoint == null) return;
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(AttackPoint.position, attackRange);

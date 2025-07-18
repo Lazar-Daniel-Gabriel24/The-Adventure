@@ -6,10 +6,8 @@ public class PlayerMovement : MonoBehaviour
     public CharacterController2D controller;
     public Animator animator;
     public float runSpeed = 40f;
-
     public float rollSpeed = 20f;
     public float rollDuration = 0.5f;
-
     public float doubleJumpVelocity = 10f;
 
     float horizontalMove = 0f;
@@ -19,14 +17,16 @@ public class PlayerMovement : MonoBehaviour
     private bool isRolling = false;
     private Rigidbody2D rb;
     private Collider2D playerCollider;
-
     private bool canDoubleJump = false;
     private bool hasDoubleJumped = false;
+
+    private PlayerAudioAdvanced playerAudio;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
+        playerAudio = GetComponent<PlayerAudioAdvanced>();
     }
 
     void Update()
@@ -51,15 +51,16 @@ public class PlayerMovement : MonoBehaviour
                 {
                     jump = true;
                     hasDoubleJumped = false;
-                    animator.SetTrigger("JumpTrigger"); // Trigger animatie
+                    animator.SetTrigger("JumpTrigger");
+                    playerAudio?.PlayJumpSound();
                 }
                 else if (canDoubleJump && !hasDoubleJumped)
                 {
                     jump = true;
                     hasDoubleJumped = true;
-                    animator.SetTrigger("JumpTrigger"); // Trigger si la double jump
-
+                    animator.SetTrigger("JumpTrigger");
                     rb.velocity = new Vector2(rb.velocity.x, doubleJumpVelocity);
+                    playerAudio?.PlayJumpSound();
                 }
             }
 
@@ -77,12 +78,18 @@ public class PlayerMovement : MonoBehaviour
                 StartRoll();
             }
         }
+
+        if (playerAudio != null)
+        {
+            playerAudio.SetGrounded(controller.IsGrounded());
+        }
     }
 
     void StartRoll()
     {
         if (!isRolling)
         {
+            playerAudio?.SetRolling(true); // începe roll
             StartCoroutine(PerformRoll());
         }
     }
@@ -105,8 +112,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         gameObject.layer = defaultLayer;
-
         isRolling = false;
+        playerAudio?.SetRolling(false); // finalizează roll
     }
 
     public void OnLanding()
@@ -119,8 +126,8 @@ public class PlayerMovement : MonoBehaviour
             animator.Play("Player_idle");
 
         hasDoubleJumped = false;
+        playerAudio?.SetGrounded(true);
     }
-
 
     void FixedUpdate()
     {
